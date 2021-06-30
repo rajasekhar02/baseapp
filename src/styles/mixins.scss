@@ -1,0 +1,205 @@
+@import "./base";
+
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+@mixin fluid-type($vw_1_width,
+  $vw_2_width,
+  $vw_3_width,
+  $min-font-size,
+  $max-font-size) {
+  $u1: unit($vw_1_width);
+  $u2: unit($vw_2_width);
+  $u3: unit($vw_3_width);
+  $u4: unit($min-font-size);
+  $u5: unit($max-font-size);
+
+  @if $u1==$u2 and $u1==$u3 and $u1==$u4 and $u1==$u5 {
+    & {
+      font-size: $min-font-size;
+
+      @include respond-to(tablet) {
+        font-size: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$vw_1_width}) / #{strip-unit($vw_2_width - $vw_1_width)}));
+      }
+
+      @include respond-to(medium-screens) {
+        font-size: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$vw_2_width}) / #{strip-unit($vw_3_width - $vw_2_width)}));
+      }
+
+      @include respond-to(wide-screens) {
+        font-size: $max-font-size;
+      }
+    }
+  }
+}
+
+@mixin respond-to($media) {
+  @if $media==tablet {
+    @media only screen and (min-width: $vw_1_width + 1) and (max-width: $vw_2_width - 1) {
+      @content;
+    }
+  }
+
+  @else if $media==medium-screens {
+    @media only screen and (min-width: $vw_2_width + 1) and (max-width: $vw_3_width - 1) {
+      @content;
+    }
+  }
+
+  @else if $media==wide-screens {
+    @media only screen and (min-width: $vw_3_width) {
+      @content;
+    }
+  }
+}
+
+@mixin responsiveProperty($property,
+  $small-size,
+  $medium-size,
+  $large-size,
+  $important: false) {
+  @if $important {
+    #{$property}: $small-size !important;
+  }
+
+  @else {
+    #{$property}: $small-size;
+  }
+
+  @include respond-to(medium-screens) {
+    @if $important {
+      #{$property}: $medium-size !important;
+    }
+
+    @else {
+      #{$property}: $medium-size;
+    }
+  }
+
+  @include respond-to(wide-screens) {
+    @if $important {
+      #{$property}: $large-size !important;
+    }
+
+    @else {
+      #{$property}: $large-size;
+    }
+  }
+}
+
+@mixin highcharts-axis-labels-font-size {
+  @include responsiveProperty(font-size,
+    $app_font_size_v_medium,
+    $app_font_size_small,
+    $app_font_size_1,
+    true);
+}
+
+@mixin highcharts-yaxis-labels-font-size {
+  @include responsiveProperty(font-size,
+    $app_font_size_1,
+    $app_font_size_2,
+    $app_font_size_3,
+    true);
+}
+
+@mixin highcharts-tooltip-font-size {
+  @include responsiveProperty(font-size,
+    $app_font_size_small,
+    $app_font_size_1,
+    $app_font_size_2,
+    true);
+}
+
+@mixin highcharts-axis-title-font-size {
+  @include responsiveProperty(font-size,
+    $app_font_size_small,
+    $app_font_size_1,
+    $app_font_size_2);
+}
+
+@mixin button-text-size {
+  font-size: $app_font_size_1;
+}
+
+@mixin link-text-size {
+  @include responsiveProperty(font-size,
+    $app_font_size_1,
+    $app_font_size_2,
+    $app_font_size_3);
+}
+
+@mixin select-drop-down-item-style {
+  font-size: $app_font_size_1;
+  height: 25px;
+  line-height: 25px;
+}
+
+@mixin er-checkbox-checked($is-deep:false) {
+  @if $is-deep {
+
+    &::v-deep .el-checkbox__input.is-checked .el-checkbox__inner,
+    &::v-deep .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      font-weight: 600;
+    }
+
+    &::v-deep .el-checkbox__input.is-checked+.el-checkbox__label {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+
+  @else {
+
+    .el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      font-weight: 600;
+    }
+
+    .el-checkbox__input.is-checked+.el-checkbox__label {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+@mixin normal-text {
+  @include responsiveProperty(font-size, $app_font_size_1, $app_font_size_2, $app_font_size_3)
+}
+
+@mixin small-text {
+  @include responsiveProperty(font-size, $app_font_size_small, $app_font_size_1, $app_font_size_2)
+}
+
+@mixin v-small-text {
+  @include responsiveProperty(font-size, $app_font_size_v_small, $app_font_size_v_medium, $app_font_size_small)
+}
+
+@mixin icon-size($render-type, $position: none) {
+  @if ($render-type==svg) {
+    @if ($position==prefix or $position==suffix) {
+      @include responsiveProperty(width, 11px, 13px, 16px);
+      @include responsiveProperty(height, 11px, 13px, 16px);
+    }
+
+    @else {
+      @include responsiveProperty(width, 16px, 22px, 26px);
+      @include responsiveProperty(height, 16px, 22px, 26px);
+    }
+  }
+
+  @else if($render-type==icon-font) {
+    @if ($position==prefix or $position==suffix) {
+      @include responsiveProperty(font-size, 11px, 13px, 16px);
+    }
+
+    @else {
+      @include responsiveProperty(font-size, 16px, 22px, 26px);
+    }
+  }
+}
