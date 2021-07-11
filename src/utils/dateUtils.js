@@ -1,10 +1,3 @@
-/**
-Copyright (C) Eruvaka Technologies Pvt Ltd - All Rights Reserved * Unauthorized copying of this file, via any medium is strictly prohibited * Proprietary and confidential * 2021
-**/
-/**
-File Name: dateUtils.js
-Description: Contains stateless helper functions used in relation to date
-*/
 import {
   add,
   parse,
